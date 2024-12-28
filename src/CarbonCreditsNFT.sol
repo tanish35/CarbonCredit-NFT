@@ -7,11 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract CarbonCreditsNFT is ERC721URIStorage, Ownable {
     uint256 public tokenCounter;
 
-    constructor() ERC721("CarbonCreditsNFT", "CCNFT") {
+    // Pass msg.sender as the initial owner to the Ownable constructor
+    constructor() ERC721("CarbonCreditsNFT", "CCNFT") Ownable(msg.sender) {
         tokenCounter = 0;
     }
 
-    function mintNFT(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
+    function mintNFT(
+        address recipient,
+        string memory tokenURI
+    ) public onlyOwner returns (uint256) {
         uint256 newTokenId = tokenCounter;
         _safeMint(recipient, newTokenId);
         _setTokenURI(newTokenId, tokenURI);

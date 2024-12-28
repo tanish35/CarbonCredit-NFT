@@ -1,0 +1,9 @@
+{
+    "name": "Carbon Credit #1",
+    "description": "This NFT represents 1 ton of CO2 offset.",
+    "image": "ipfs://YourImageCID",
+    "attributes": [
+        { "trait_type": "Type", "value": "Carbon Credit" },
+        { "trait_type": "Amount", "value": "1 Ton CO2" }
+    ]
+}

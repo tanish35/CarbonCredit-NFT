@@ -6,4 +6,7 @@ libs = ["lib"]
 [rpc_endpoints]
 avax_testnet = "https://api.avax-test.network/ext/bc/C/rpc"
 
+[profile.default.deploy]
+private_key = { env = "PRIVATE_KEY" }
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
