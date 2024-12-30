@@ -14,7 +14,7 @@ contract MintCarbonCredits is Script {
         address recipient = 0x424bBA2a6f1c14e4D8e2Cf1bCAE1B06740Fa4755;
 
         string
-            memory tokenURI = "ipfs://bafkreiab3ouagjt7rcpwa657aearptytdxeijjik6e7cmayvbcr3rdhhm4";
+            memory tokenURI = "ipfs://bafkreid5nywbwq3mujctdoz3ilxhncbvglmqe5m3jswg5qk5hn3mzqhnxq";
 
         ccNFT.mintNFT(recipient, tokenURI);
 
