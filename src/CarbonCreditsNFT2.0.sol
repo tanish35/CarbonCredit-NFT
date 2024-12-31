@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     uint256 public totalSupply;
     uint256 private _tokenId;
-    uint256 public nftRate = 1 ether;
+    uint256 public defaultRate = 1 ether;
 
     // Events
     event CreditMinted(address indexed to, uint256 indexed tokenId, string certificateURI);
@@ -28,6 +28,7 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     mapping(address => Credit[]) public credits;
     mapping(uint256 => Credit) public creditId;
     mapping(uint256 => address) public creditOwner;
+    mapping(uint256 => uint256) public tokenRates;
 
     address[] public authorizedMinters;
     mapping(address => bool) public isMinter;
@@ -40,33 +41,38 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
 
 
     function mint(
-        address to,
-        string memory typeofcredit,
-        uint256 quantity,
-        string memory certificateURI,
-        uint256 expiryDate
-    ) public {
-        require(isMinter[msg.sender] || msg.sender == owner(), "Not authorized to mint");
-        uint256 id = _tokenId;
-        Credit memory credit = Credit(id, typeofcredit, quantity, certificateURI, expiryDate, false);
-        credits[to].push(credit);
-        creditId[id] = credit;
-        creditOwner[id] = to;
-        totalSupply++;
-        _tokenId++;
+    address to,
+    string memory typeofcredit,
+    uint256 quantity,
+    string memory certificateURI,
+    uint256 expiryDate,
+    uint256 rate
+) public {
+    require(isMinter[msg.sender] || msg.sender == owner(), "Not authorized to mint");
+    uint256 id = _tokenId;
+    Credit memory credit = Credit(id, typeofcredit, quantity, certificateURI, expiryDate, false);
+    credits[to].push(credit);
+    creditId[id] = credit;
+    creditOwner[id] = to;
+    totalSupply++;
+    _tokenId++;
 
-        _mint(to, id);
-        _setTokenURI(id, certificateURI);
+    _mint(to, id);
+    _setTokenURI(id, certificateURI);
 
-        emit CreditMinted(to, id, certificateURI);
-    }
+    // Set rate: use provided rate or defaultRate
+    tokenRates[id] = rate > 0 ? rate : defaultRate;
+
+    emit CreditMinted(to, id, certificateURI);
+}
+
 
     function transferCredit(address from, address to, uint256 tokenId) public payable {
         require(creditOwner[tokenId] == from, "You are not the owner of this credit");
         require(creditOwner[tokenId] != to, "You are already the owner of this credit");
         require(creditId[tokenId].expiryDate > block.timestamp, "Credit has expired");
         require(creditId[tokenId].retired == false, "Credit has been retired");
-        require(msg.value == nftRate, "Insufficient funds");
+        require(msg.value == tokenRates[tokenId], "Insufficient funds");
 
         payable(from).transfer(msg.value);
         _transfer(from, to, tokenId);
@@ -117,8 +123,9 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     }
 
 
-    function setRate(uint256 rate) public onlyOwner {
-        nftRate = rate;
+    function setRate(uint256 tokenId, uint256 rate) public {
+        require(creditOwner[tokenId] == msg.sender || msg.sender == owner(), "Not authorized to set rate");
+        tokenRates[tokenId] = rate;
     }
 
 
@@ -139,8 +146,8 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
         return credits[owner];
     }
 
-    function getRate() public view returns (uint256) {
-        return nftRate;
+    function getRate(uint256 tokenId) public view returns (uint256) {
+        return tokenRates[tokenId];
     }
 }
 

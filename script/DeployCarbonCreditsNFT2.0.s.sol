@@ -13,4 +13,4 @@ contract DeployCarbonCreditNFT is Script {
     }
 }
 
-// Contract Address: 0xabB026C81ba331999b2343c417aC15dB9216F3bD
+// Contract Address: 0x5ebDb988df7aEcA60FBF28B5FD1B07509b6fCa20
