@@ -138,6 +138,10 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     function getCreditByOwner(address owner) public view returns (Credit[] memory) {
         return credits[owner];
     }
+
+    function getRate() public view returns (uint256) {
+        return nftRate;
+    }
 }
 
 //Written by Somnath 😋😋

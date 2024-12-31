@@ -7,7 +7,7 @@ import "../src/CarbonCreditsNFT2.0.sol";
 contract MintCarbonCreditNFT is Script {
     function run() external {
         vm.startBroadcast();
-        CarbonCreditNFT carbonCreditNFT = CarbonCreditNFT(0x9a860C718FEA0844d65b1a8fD8e845467F16E670);
+        CarbonCreditNFT carbonCreditNFT = CarbonCreditNFT(0xabB026C81ba331999b2343c417aC15dB9216F3bD);
         address recipient = 0x424bBA2a6f1c14e4D8e2Cf1bCAE1B06740Fa4755;
         string memory typeofCredit = "Renewable Energy";
         uint256 quantity = 100;
