@@ -60,7 +60,6 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     _mint(to, id);
     _setTokenURI(id, certificateURI);
 
-    // Set rate: use provided rate or defaultRate
     tokenRates[id] = rate > 0 ? rate : defaultRate;
 
     emit CreditMinted(to, id, certificateURI);
@@ -123,8 +122,7 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     }
 
 
-    function setRate(uint256 tokenId, uint256 rate) public {
-        require(creditOwner[tokenId] == msg.sender || msg.sender == owner(), "Not authorized to set rate");
+    function setRate(uint256 tokenId, uint256 rate) public onlyOwner {
         tokenRates[tokenId] = rate;
     }
 
