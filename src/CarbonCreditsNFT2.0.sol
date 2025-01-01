@@ -10,10 +10,11 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     uint256 public defaultRate = 1 ether;
 
     // Events
-    event CreditMinted(address indexed to, uint256 indexed tokenId, string certificateURI);
+    event CreditMinted(address indexed to, uint256 indexed tokenId,uint256 price, string certificateURI, uint256 expiryDate);
     event CreditTransferred(address indexed from, address indexed to, uint256 tokenId, uint256 amount);
     event CreditRetired(address indexed owner, uint256 indexed tokenId);
     event RewardIssued(address indexed to, uint256 reward);
+
 
     struct Credit {
         uint256 id;
@@ -47,23 +48,28 @@ contract CarbonCreditNFT is ERC721URIStorage, Ownable(msg.sender) {
     string memory certificateURI,
     uint256 expiryDate,
     uint256 rate
-) public {
-    require(isMinter[msg.sender] || msg.sender == owner(), "Not authorized to mint");
-    uint256 id = _tokenId;
-    Credit memory credit = Credit(id, typeofcredit, quantity, certificateURI, expiryDate, false);
-    credits[to].push(credit);
-    creditId[id] = credit;
-    creditOwner[id] = to;
-    totalSupply++;
-    _tokenId++;
+    ) public {
+        require(isMinter[msg.sender] || msg.sender == owner(), "Not authorized to mint");
+        uint256 id = _tokenId;
+        Credit memory credit = Credit(id, typeofcredit, quantity, certificateURI, expiryDate, false);
+        credits[to].push(credit);
+        creditId[id] = credit;
+        creditOwner[id] = to;
+        totalSupply++;
+        _tokenId++;
 
-    _mint(to, id);
-    _setTokenURI(id, certificateURI);
+        _mint(to, id);
+        _setTokenURI(id, certificateURI);
 
-    tokenRates[id] = rate > 0 ? rate : defaultRate;
+        tokenRates[id] = rate > 0 ? rate : defaultRate;
 
-    emit CreditMinted(to, id, certificateURI);
-}
+        emit CreditMinted(to, id, rate, certificateURI, expiryDate);
+    }
+
+    modifier setApproved(uint256 tokenId, address _from) {
+        require(creditOwner[tokenId] == _from, "You are not the owner of this credit");
+        _;
+    }
 
 
     function transferCredit(address from, address to, uint256 tokenId) public payable {
